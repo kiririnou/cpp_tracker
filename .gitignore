@@ -2,3 +2,4 @@ bin/
 build/
 vendor/rapidjson
 # vendor/mingw-std-threads
+.vscode/

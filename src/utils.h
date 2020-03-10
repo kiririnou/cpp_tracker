@@ -233,4 +233,19 @@ namespace Utils {
 		curl_easy_cleanup(curl);
 	}
 
+	std::string ReadConfig(const std::string& path)
+	{
+		std::ifstream fs;
+		std::string data;
+		fs.open(path, std::ios::in | std::ios::app);
+
+		if (fs.is_open())
+			fs >> data;
+		else
+			throw std::runtime_error("No config file found.\nCreate config.txt with content <addr=http://your.address>");
+		
+		fs.close();	
+		return data;
+	}
+
 }
