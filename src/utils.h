@@ -219,6 +219,7 @@ namespace Utils {
 	
 		std::string json = Jsonify(res);
 	
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
@@ -233,7 +234,7 @@ namespace Utils {
 		curl_easy_cleanup(curl);
 	}
 
-	std::string ReadConfig(const std::string& path)
+	inline std::string ReadConfig(const std::string& path)
 	{
 		std::ifstream fs;
 		std::string data;

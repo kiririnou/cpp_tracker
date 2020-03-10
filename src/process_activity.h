@@ -3,6 +3,7 @@
 
 #include "rapidjson/prettywriter.h"
 #include <string>
+#include <iostream>
 
 class ProcessActivity
 {
@@ -14,8 +15,8 @@ public:
     
     ProcessActivity(const std::string& hwId, const std::string& start, const std::string& processTitle, int mem)
         : m_hwId(hwId), m_start(start), m_processTitle(processTitle), m_mem(mem) {}
-        
-    ~ProcessActivity() {}
+
+    ~ProcessActivity() { std::cout << "Destructor\n"; }
 
     void SetHWID(const std::string& hwId)
     {

@@ -8,14 +8,16 @@
 #include "utils.h"
 #include "process_activity.h"
 
+// const inline std::string url = Utils::ReadConfig("config.txt") + "/api/process_activity";
+
 int main()
 {
 	using namespace Utils;
 	using namespace std::chrono_literals;
 
 	std::cout << "Addr: " << ReadConfig("config.txt") << std::endl;
+	const std::string URL = ReadConfig("config.txt") + "/api/process_activity";
 
-	std::string url = "http://192.168.1.116:5000/api/process_activity";
 	ProcessActivity old;
 	ProcessActivity current(GetHWID(), GetNow(), GetWindowName(), GetUsedMemory());
 
@@ -37,7 +39,7 @@ int main()
 		if (current.GetProcessTitle() != old.GetProcessTitle())
 		{
 			old.SetEndTime(current.GetStartTime());
-			Post(url, old);
+			Post(URL, old);
 
 			old = current;
 		}
