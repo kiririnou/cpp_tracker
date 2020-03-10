@@ -245,7 +245,7 @@ namespace Utils {
 			throw std::runtime_error("No config file found.\nCreate config.txt with content <addr=http://your.address>");
 		
 		fs.close();	
-		return data;
+		return data.substr(5, data.length() - 4);
 	}
 
 }

@@ -21,28 +21,28 @@ int main()
 
 	old = current;
 
-	// while (true)
-	// {
-	// 	current.SetHWID(GetHWID());
-	// 	current.SetStartTime(GetNow());
-	// 	current.SetProcessTitle(GetWindowName());
-	// 	current.SetMemory(GetUsedMemory());
+	while (true)
+	{
+		current.SetHWID(GetHWID());
+		current.SetStartTime(GetNow());
+		current.SetProcessTitle(GetWindowName());
+		current.SetMemory(GetUsedMemory());
 
-	// 	if (current.GetProcessTitle().empty())
-	// 	{
-	// 		current = old;
-	// 		continue;
-	// 	}
+		if (current.GetProcessTitle().empty())
+		{
+			current = old;
+			continue;
+		}
 
-	// 	if (current.GetProcessTitle() != old.GetProcessTitle())
-	// 	{
-	// 		old.SetEndTime(current.GetStartTime());
-	// 		Post(url, old);
+		if (current.GetProcessTitle() != old.GetProcessTitle())
+		{
+			old.SetEndTime(current.GetStartTime());
+			Post(url, old);
 
-	// 		old = current;
-	// 	}
-	// 	std::this_thread::sleep_for(1s);
-	// }
+			old = current;
+		}
+		std::this_thread::sleep_for(1s);
+	}
 
 	system("pause");
     return 0;
