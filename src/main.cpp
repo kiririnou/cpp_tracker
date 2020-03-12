@@ -15,7 +15,6 @@ int main()
 	using namespace std::chrono_literals;
 	using p_ActiveWindow = std::unique_ptr<ActiveWindow>;
 
-	std::cout << "Addr: " << ReadConfig("config.txt") << std::endl;
 	static const User user(GetHWID(), GetUsername());
 
 	const std::string URL = ReadConfig("config.txt");
@@ -62,6 +61,7 @@ int main()
 					break;
 				}
 
+				p_last.release();
 				p_last = p_current->Copy();
 			}
 			std::this_thread::sleep_for(1s);
