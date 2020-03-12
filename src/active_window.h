@@ -3,14 +3,62 @@
 
 #include <string>
 #include <string_view>
+#include <memory>
 
 #include "rapidjson/prettywriter.h"
 
 class ActiveWindow
 {
 public:
+    ActiveWindow() {}
+
+    ActiveWindow(std::string_view title, std::string_view timeStart)
+        : m_title(title), m_timeStart(timeStart) {}
+
     ActiveWindow(std::string_view title, std::string_view timeStart, std::string_view timeEnd)
         : m_title(title), m_timeStart(timeStart), m_timeEnd(timeEnd) {}
+
+    ~ActiveWindow() {}
+
+    ActiveWindow(const ActiveWindow& aw)
+    {
+        m_title = aw.m_title;
+        m_timeStart = aw.m_timeStart;
+        m_timeEnd = aw.m_timeEnd;
+    }
+
+    ActiveWindow(ActiveWindow&& aw) = delete;
+
+    ActiveWindow& operator=(const ActiveWindow& other)
+    {
+        if (this == &other)
+            return *this;
+
+        m_title = other.m_title;
+        m_timeStart = other.m_timeStart;
+        m_timeEnd = other.m_timeEnd;
+        return *this;
+    }
+
+    std::unique_ptr<ActiveWindow> Copy()
+    {
+        return std::make_unique<ActiveWindow>(m_title, m_timeStart, m_timeEnd);
+    }
+
+    std::string GetTitle() const
+    {
+        return m_title;
+    }
+
+    std::string GetStartTime() const
+    {
+        return m_timeStart;
+    }
+
+    void SetEndTime(std::string_view endTime)
+    {
+        m_timeEnd = endTime;
+    }
 
     template <typename Writer>
     void Serialize(Writer& writer)

@@ -21,7 +21,8 @@
 #include <fstream>
 
 #include <curl/curl.h>
-#include "process_activity.h"
+
+#include "rapidjson/prettywriter.h"
 
 namespace Utils {
 
@@ -209,19 +210,30 @@ namespace Utils {
 		return strbuf.GetString();
 	}
 	
+	static size_t Callback(const char* contents, size_t size, size_t nmemb, std::string* out)
+	{
+		const std::size_t realsize(size * nmemb);
+		out->append(contents, realsize);
+		return realsize;
+	}
+
 	template <class T>
 	int Post(const std::string& url, T res)
 	{
 		CURL* curl;
 		CURLcode resCode;
 		curl_slist* slist = nullptr;
-	
+		std::string callbackBuffer = "";
+
 		curl = curl_easy_init();
 		slist = curl_slist_append(slist, "Content-Type: application/json");
 	
 		std::string json = Jsonify(res);
-	
+
 		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &callbackBuffer);
+
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
@@ -231,12 +243,32 @@ namespace Utils {
 
 		resCode = curl_easy_perform(curl);
 		if (resCode != CURLE_OK)
-			throw std::runtime_error("Curl failed. Code: " + resCode);
+			throw std::runtime_error("Curl POST failed. Code: " + resCode);
 	
-		curl_easy_cleanup(curl);
-
-		long response_code = -1;
+		int response_code = -1;
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+		std::cerr << "callbackBuffer size: " << callbackBuffer.length() << std::endl;
+		std::cerr << "Callback:\n" << callbackBuffer << std::endl;
+		
+		curl_easy_cleanup(curl);
+		return response_code;
+	}
+
+	int Get(const std::string& get)
+	{
+		CURL* curl;
+		CURLcode resCode;
+
+		curl = curl_easy_init();
+		resCode = curl_easy_perform(curl);
+
+		if (resCode != CURLE_OK)
+			throw std::runtime_error("Curl GET failed. Code: " + resCode);
+
+		int response_code = -1;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+
+		curl_easy_cleanup(curl);
 		return response_code;
 	}
 
