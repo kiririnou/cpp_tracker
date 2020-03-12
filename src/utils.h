@@ -194,7 +194,8 @@ namespace Utils {
 		return static_cast<int>(mem);
 	}
 
-	std::string Jsonify(ProcessActivity res)
+	template <class T>
+	std::string Jsonify(T res)
 	{
 		using namespace rapidjson;
 		
@@ -208,7 +209,8 @@ namespace Utils {
 		return strbuf.GetString();
 	}
 	
-	int Post(const std::string& url, ProcessActivity res)
+	template <class T>
+	int Post(const std::string& url, T res)
 	{
 		CURL* curl;
 		CURLcode resCode;
@@ -232,6 +234,10 @@ namespace Utils {
 			throw std::runtime_error("Curl failed. Code: " + resCode);
 	
 		curl_easy_cleanup(curl);
+
+		long response_code = -1;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+		return response_code;
 	}
 
 	inline std::string ReadConfig(const std::string& path)

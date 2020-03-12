@@ -7,6 +7,7 @@
 
 #include "utils.h"
 #include "process_activity.h"
+#include "user.h"
 
 // const inline std::string url = Utils::ReadConfig("config.txt") + "/api/process_activity";
 
@@ -16,7 +17,13 @@ int main()
 	using namespace std::chrono_literals;
 
 	std::cout << "Addr: " << ReadConfig("config.txt") << std::endl;
-	const std::string URL = ReadConfig("config.txt") + "/api/process_activity";
+	// const std::string URL = ReadConfig("config.txt") + "/api/process_activity";
+	User user(GetHWID(), GetUsername());
+
+	const std::string URL = ReadConfig("config.txt");
+	const std::string URL_Resource_Usage = URL + "/resource-usages/" + user.GetHWID();
+	const std::string URL_Active_Windows = URL + "/active-windows/" + user.GetHWID();
+	const std::string URL_Users = URL + "users";
 
 	ProcessActivity old;
 	ProcessActivity current(GetHWID(), GetNow(), GetWindowName(), GetUsedMemory());
@@ -39,11 +46,17 @@ int main()
 		if (current.GetProcessTitle() != old.GetProcessTitle())
 		{
 			old.SetEndTime(current.GetStartTime());
-			Post(URL, old);
+			int res = Post(URL, old);
+
+			if (res == 404)
+			{
+				res = Post(URL_Users, user);
+				
+			}
 
 			old = current;
 		}
-		std::this_thread::sleep_for(1s);
+		std::this_thread::sleep_for(1m);
 	}
 
 	system("pause");
