@@ -6,7 +6,6 @@
 #include <windows.h>
 #include <chrono>
 #include <sstream>
-#include <exception>
 
 namespace system_info {
 

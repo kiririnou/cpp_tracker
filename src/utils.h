@@ -17,7 +17,6 @@
 #include <iomanip>
 #include <memory>
 #include <exception>
-#include <vector>
 #include <fstream>
 
 #include <thread>
@@ -83,8 +82,6 @@ namespace utils {
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, static_cast<long>(json.length()));
-	
-		// std::cerr << json << std::endl;
 
 		resCode = curl_easy_perform(curl);
 		if (resCode != CURLE_OK)
@@ -92,8 +89,6 @@ namespace utils {
 	
 		int response_code = -1;
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
-		// std::cerr << "callbackBuffer size: " << callbackBuffer.length() << std::endl;
-		// std::cerr << "Response:\n" << callbackBuffer << std::endl;
 		
 		curl_easy_cleanup(curl);
 		return response_code;

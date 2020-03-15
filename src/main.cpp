@@ -1,6 +1,5 @@
 ﻿#include <iostream>
 #include <string>
-#include <string_view>
 #include <sstream>
 #include <memory>
 #include <chrono>
@@ -31,8 +30,6 @@ int main()
 	const std::string URL_Users = URL + "/api/v1/users";
 	
 	CheckUser(URL_Users);
-	// MonitorWindows(URL_Active_Windows);
-	// MonitorResources(URL_Resource_Usage);
 
 	std::thread th_mw(MonitorWindows, URL_Active_Windows), th_mr(MonitorResources, URL_Resource_Usage);
 
