@@ -12,15 +12,9 @@ public:
     User(std::string_view hwId, std::string_view userName)
         : m_hwId(hwId), m_userName(userName) {}
 
-    std::string GetHWID() const
-    {
-        return m_hwId;
-    }
+    std::string GetHWID() const { return m_hwId; }
 
-    std::string GetUserName() const
-    {
-        return m_userName;
-    }
+    std::string GetUserName() const { return m_userName; }
 
     template <typename Writer>
     void Serialize(Writer& writer)

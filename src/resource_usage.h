@@ -12,6 +12,12 @@ public:
     ResourceUsage(std::string_view time, int cpu, int mem)
         : m_time(time), m_cpu(cpu), m_mem(mem) {}
 
+	std::string GetTime() const { return m_time; }
+
+	int GetCPU() const { return m_cpu; }
+
+	int GetMemory() const { return m_mem; }
+
     template <typename Writer>
     void Serialize(Writer& writer)
     {

@@ -45,15 +45,11 @@ public:
         return std::make_unique<ActiveWindow>(m_title, m_timeStart, m_timeEnd);
     }
 
-    std::string GetTitle() const
-    {
-        return m_title;
-    }
+    std::string GetTitle() const { return m_title; }
 
-    std::string GetStartTime() const
-    {
-        return m_timeStart;
-    }
+    std::string GetStartTime() const { return m_timeStart; }
+
+	std::string GetEndTime() const { return m_timeEnd; }
 
     void SetEndTime(std::string_view endTime)
     {

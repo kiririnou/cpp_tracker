@@ -23,6 +23,8 @@ void MonitorResources(const std::string& url);
 
 int main()
 {
+	
+	logger::Init();
 
 	const std::string URL = utils::ReadConfig("config.txt");
 	const std::string URL_Resource_Usage = URL + "/api/v1/resource-usages/" + user.GetHWID();
@@ -42,30 +44,30 @@ int main()
 
 void CheckUser(const std::string& url)
 {
-	logger log("CheckUser");
-	log.info("Thread id: " + utils::GetThreadId());
+	USR_INFO("Username: {0} HWID: {1}", user.GetUserName(), user.GetHWID());
 
 	try
 	{
 		switch (utils::Post<User>(url, user))
 		{
 		case 200:
-			log.info("200 Successfully created new user");
+			USR_INFO("200 Successfully created new user");
 			break;
 		case 400:
-			log.error("400 Malformed request parameters");
+			USR_ERROR("400 Malformed request paramaters");
 			break;
 		case 409:
-			log.info("409 User already exists");
+			USR_INFO("409 User already exists");
+			break;
 		default:
+			USR_ERROR("Unknown code");
 			break;
 		}
 	}
 	catch(const std::exception& e)
 	{
-		log.critical(e.what());
+		USR_FATAL(e.what());
 	}
-	
 }
 
 void MonitorWindows(const std::string& url)
@@ -73,13 +75,14 @@ void MonitorWindows(const std::string& url)
 	using namespace std::chrono_literals;
 	using p_ActiveWindow = std::unique_ptr<ActiveWindow>;
 
-	logger log("MonitorWindows");
-	log.info("Thread id: " + utils::GetThreadId());
+	WND_INFO("Starting");
 
 	try
 	{
 		p_ActiveWindow current = std::make_unique<ActiveWindow>(system_info::GetWindowName(), system_info::GetNow());
 		p_ActiveWindow last = current->Copy();
+		
+		WND_INFO("Title: {0} Start: {1}", last->GetTitle(), last->GetStartTime());
 
 		while (true)
 		{
@@ -99,18 +102,20 @@ void MonitorWindows(const std::string& url)
 				switch (utils::Post<ActiveWindow>(url, *last))
 				{
 				case 201:
-					log.info("201 Window's activity period succesfully added");
+					WND_INFO("201 Windows's activity period successfully added");
 					break;
 				case 400:
-					log.error("400 Malformed request parameters");
+					WND_ERROR("400 Malformed request parameters");
 					break;
 				case 404:
-					log.error("404 A user with the specified hardware ID was not found");
+					WND_WARN("404 A user with the specified hardware ID was not found");
 					break;
 				default:
-					log.error("Unknown code");
+					WND_ERROR("Unknown code");
 					break;
 				}
+
+				WND_INFO("Title: {0} Start: {1} End: {2}", last->GetTitle(), last->GetStartTime(), last->GetEndTime());
 
 				last.release();
 				last = current->Copy();
@@ -120,7 +125,7 @@ void MonitorWindows(const std::string& url)
 	}
 	catch(const std::exception& e)
 	{
-		log.critical(e.what());
+		WND_FATAL(e.what());
 	}
 	
 }
@@ -130,8 +135,7 @@ void MonitorResources(const std::string& url)
 	using namespace std::chrono_literals;
 	using p_ResourceUsage = std::unique_ptr<ResourceUsage>;
 
-	logger log("MonitorResources");
-	log.info("Thread id: " + utils::GetThreadId());
+	RES_INFO("Starting");
 
 	try
 	{
@@ -141,19 +145,21 @@ void MonitorResources(const std::string& url)
 		{
 			resUsage = std::make_unique<ResourceUsage>(system_info::GetNow(), system_info::GetCPUData(3), system_info::GetUsedMemory());
 
+			RES_INFO("Time: {0} CPU: {1}% Mem: {2}", resUsage->GetTime(), resUsage->GetCPU(), resUsage->GetMemory());
+
 			switch (utils::Post<ResourceUsage>(url, *resUsage))
 			{
 			case 201:
-				log.info("201 Resource usage created successfully");
+				RES_INFO("201 Resource usage created successfully");
 				break;
 			case 400:
-				log.error("400 Malformed request parameters");
+				RES_ERROR("400 Malformed request parameters");
 				break;
 			case 404:
-				log.error("404 A user with the specified hardware ID was not found");
+				RES_WARN("404 A user with the specified hardware ID was not found");
 				break;
 			default:
-				log.error("Unknown code");
+				RES_ERROR("Unknows code");
 				break;
 			}
 			resUsage.release();
@@ -162,6 +168,6 @@ void MonitorResources(const std::string& url)
 	}
 	catch(const std::exception& e)
 	{
-		log.critical(e.what());
+		RES_FATAL(e.what());
 	}
 }

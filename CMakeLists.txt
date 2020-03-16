@@ -7,5 +7,5 @@ set(cpp_tracker_VERSION_MINOR 1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(vendor/mingw-std-threads)
+add_subdirectory(vendor)
 add_subdirectory(src)

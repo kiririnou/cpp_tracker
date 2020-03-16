@@ -7,7 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_GENERATOR "MinGW Makefiles")
 set(CMAKE_CXX_FLAGS "-static -static-libgcc -static-libstdc++ -Wcpp -DCURL_STATICLIB -lpthread")
 
-add_executable(tracker main.cpp utils.h)
+add_executable(tracker main.cpp logger.cpp)
 set_target_properties(tracker PROPERTIES 
     OUTPUT_NAME ${CMAKE_PROJECT_NAME} 
     SUFFIX ".exe"
@@ -16,10 +16,10 @@ set_target_properties(tracker PROPERTIES
 target_include_directories(tracker PUBLIC 
     ${PROJECT_SOURCE_DIR}/vendor/curl-7.69.0-win64-mingw/include
     ${PROJECT_SOURCE_DIR}/vendor/rapidjson/include
-    ${PROJECT_SOURCE_DIR}/vendor/mingw-std-threads
+    ${PROJECT_SOURCE_DIR}/vendor/spdlog/include
 )
 
 target_link_libraries(tracker PUBLIC 
     ${PROJECT_SOURCE_DIR}/vendor/curl-7.69.0-win64-mingw/lib/libcurl.dll.a
-    mingw_stdthreads
+    #mingw_stdthreads
 )

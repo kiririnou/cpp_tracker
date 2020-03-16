@@ -1,72 +1,40 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <string_view>
-#include <mutex>
-#include <windows.h>
-#include "utils.h"
-#include "system_info.h"
-
-std::mutex mtx;
+#include <memory>
+#include "spdlog/spdlog.h"
 
 class logger
 {
 public:
-    logger(std::string_view name)
-    {
-        m_name = name;
-        m_hInstance = GetStdHandle(STD_OUTPUT_HANDLE);
-    }
-
-    void log(std::string_view data)
-    {
-        std::lock_guard<std::mutex> guard(mtx);
-        std::clog << "[" << system_info::GetNow() << "] <" << m_name << "> " << data << std::endl;
-    }
-
-    void info(std::string_view data)
-    {
-        std::lock_guard<std::mutex> guard(mtx);
-        std::clog << "[" << system_info::GetNow() << "] <" << m_name << "> [";
-        SetConsoleTextAttribute(m_hInstance, 10);
-        std::clog << "info";
-        SetConsoleTextAttribute(m_hInstance, 7);
-        std::clog << "] " << data << std::endl;
-    }
-
-    void warn(std::string_view data)
-    {
-        std::lock_guard<std::mutex> guard(mtx);
-        std::clog << "[" << system_info::GetNow() << "] <" << m_name << "> [";
-        SetConsoleTextAttribute(m_hInstance, 14);
-        std::clog << "warn";
-        SetConsoleTextAttribute(m_hInstance, 7);
-        std::clog << "] " << data << std::endl;
-    }
-
-    void error(std::string_view data)
-    {
-        std::lock_guard<std::mutex> guard(mtx);
-        std::clog << "[" << system_info::GetNow() << "] <" << m_name << "> [";
-        SetConsoleTextAttribute(m_hInstance, 12);
-        std::clog << "error";
-        SetConsoleTextAttribute(m_hInstance, 7);
-        std::clog << "] " << data << std::endl;
-    }
-
-    void critical(std::string_view data)
-    {
-        std::lock_guard<std::mutex> guard(mtx);
-        std::clog << "[" << system_info::GetNow() << "] <" << m_name << "> [";
-        SetConsoleTextAttribute(m_hInstance, 192);
-        std::clog << "critical";
-        SetConsoleTextAttribute(m_hInstance, 7);
-        std::clog << "] " << data << std::endl;
-    }
+	static void Init();
+	
+	inline static std::shared_ptr<spdlog::logger>& GetUsrLogger() { return s_UsrLogger; }
+	inline static std::shared_ptr<spdlog::logger>& GetWndLogger() { return s_WndLogger; }
+	inline static std::shared_ptr<spdlog::logger>& GetResLogger() { return s_ResLogger; }
 
 private:
-    std::string_view m_name;
-    HANDLE m_hInstance;
+	static std::shared_ptr<spdlog::logger> s_UsrLogger;
+	static std::shared_ptr<spdlog::logger> s_WndLogger;
+	static std::shared_ptr<spdlog::logger> s_ResLogger;
 };
+
+#define WND_TRACE(...)	::logger::GetWndLogger()->trace(__VA_ARGS__)
+#define WND_INFO(...)	::logger::GetWndLogger()->info(__VA_ARGS__)
+#define WND_WARN(...)	::logger::GetWndLogger()->warn(__VA_ARGS__)
+#define WND_ERROR(...)	::logger::GetWndLogger()->error(__VA_ARGS__)
+#define WND_FATAL(...)	::logger::GetWndLogger()->critical(__VA_ARGS__)
+
+#define RES_TRACE(...)	::logger::GetResLogger()->trace(__VA_ARGS__)
+#define RES_INFO(...)	::logger::GetResLogger()->info(__VA_ARGS__)
+#define RES_WARN(...)	::logger::GetResLogger()->warn(__VA_ARGS__)
+#define RES_ERROR(...)	::logger::GetResLogger()->error(__VA_ARGS__)
+#define RES_FATAL(...)	::logger::GetResLogger()->critical(__VA_ARGS__)
+
+#define USR_TRACE(...)	::logger::GetUsrLogger()->trace(__VA_ARGS__)
+#define USR_INFO(...)	::logger::GetUsrLogger()->info(__VA_ARGS__)
+#define USR_WARN(...)	::logger::GetUsrLogger()->warn(__VA_ARGS__)
+#define USR_ERROR(...)	::logger::GetUsrLogger()->error(__VA_ARGS__)
+#define USR_FATAL(...) 	::logger::GetUsrLogger()->critical(__VA_ARGS__)
 
 #endif

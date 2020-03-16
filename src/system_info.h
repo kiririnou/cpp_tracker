@@ -41,7 +41,7 @@ namespace system_info {
 		LPWSTR buff = new WCHAR[255];
 		DWORD dwType;
 		DWORD dwBufSize = 255;
-		const char* subkey = "Software\\Microsoft\\Cryptography";
+		const wchar_t* subkey = L"Software\\Microsoft\\Cryptography";
 		std::wstring strValueOfKey = L"bad";
 
 		if (RegOpenKey(HKEY_LOCAL_MACHINE, subkey, &hKey) == ERROR_SUCCESS)
@@ -100,7 +100,7 @@ namespace system_info {
 		typedef DWORD(WINAPI * PNTQUERYSYSYTEMINFORMATION)(DWORD info_class, void *out, DWORD size, DWORD *out_size);
 		PNTQUERYSYSYTEMINFORMATION pNtQuerySystemInformation = NULL;
 
-		pNtQuerySystemInformation = (PNTQUERYSYSYTEMINFORMATION)GetProcAddress(GetModuleHandle("NTDLL.DLL"), "NtQuerySystemInformation");
+		pNtQuerySystemInformation = (PNTQUERYSYSYTEMINFORMATION)GetProcAddress(GetModuleHandle(L"NTDLL.DLL"), "NtQuerySystemInformation");
 		SYSTEM_BASIC_INFORMATION sbi;
 		SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION * spi;
 
