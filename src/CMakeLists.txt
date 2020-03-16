@@ -21,5 +21,4 @@ target_include_directories(tracker PUBLIC
 
 target_link_libraries(tracker PUBLIC 
     ${PROJECT_SOURCE_DIR}/vendor/curl-7.69.0-win64-mingw/lib/libcurl.dll.a
-    #mingw_stdthreads
 )
